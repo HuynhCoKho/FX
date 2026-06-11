@@ -21,10 +21,7 @@ h1{margin:0;font-size:clamp(36px,5vw,52px);line-height:1;white-space:nowrap;lett
 </head>
 
 <body>
-  <main class="shell">
-    <header><div><h1>Tỷ giá & vàng</h1><p class="subtitle">Theo dõi nhanh tỷ giá, tài sản USD và quy đổi giá vàng thế giới USD/ounce sang VND/lượng.</p></div><div class="status" aria-live="polite"><span>Cập nhật dữ liệu</span><strong id="updatedAt">Đang tải dữ liệu...</strong><small id="dataNote" class="tiny">Có dữ liệu dự phòng khi API không phản hồi.</small></div></header>
-    <div class="grid">
-      <div class="stack left-stack">
+ 
         <section><div class="section-head"><div><h2>Bảng tỷ giá phổ biến so với VND</h2><div class="tiny">Mua/bán là ước tính theo biên độ tham khảo quanh tỷ giá trung tâm.</div></div><button id="refreshBtn" class="primary" type="button">↻ Cập nhật</button></div><div style="overflow-x:auto"><table><thead><tr><th>Ngoại tệ</th><th>1 đơn vị (VND)</th><th class="hide-mobile">Mua (VND)</th><th class="hide-mobile">Bán (VND)</th></tr></thead><tbody id="rateRows"></tbody></table></div></section>
         <section><div class="section-head"><div><h2>Tài sản tham khảo</h2><div class="tiny">BTC/ETH theo CoinGecko; DXY và WTI ưu tiên Yahoo live qua proxy. Nếu nguồn live không phản hồi, trang dùng số tham khảo.</div></div></div><div class="asset-grid" id="assetGrid"></div></section>
       </div>
