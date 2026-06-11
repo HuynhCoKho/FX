@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>FX & Gold VND</title>
+  <title>Tỷ giá & vàng</title>
   <meta name="description" content="Bảng tỷ giá phổ biến so với VND, giá vàng và công cụ quy đổi vàng thế giới USD/ounce sang VND/lượng.">
   <style>
     :root{color-scheme:light;--ink:#182027;--muted:#69737f;--line:#dce2e8;--soft:#f4f7f9;--paper:#fff;--green:#176f4d;--gold:#b47b16;--red:#a33a32;--blue:#215b91;--shadow:0 18px 50px rgba(21,34,49,.12)}
@@ -15,7 +15,7 @@
     <header>
       <div>
         <h1>Tỷ giá & vàng</h1>
-        <p class="subtitle">Theo dõi nhanh USD, EUR, JPY, CNY, THB so với VND; chuyển đổi giữa ngoại tệ; quy đổi giá vàng thế giới USD/ounce sang VND/lượng.</p>
+        <p class="subtitle">Theo dõi nhanh USD, EUR, JPY, CNY, THB so với VND; chuyển đổi giữa toàn bộ ngoại tệ API trả về; quy đổi giá vàng thế giới USD/ounce sang VND/lượng.</p>
       </div>
       <div class="status" aria-live="polite">
         <span>Cập nhật</span>
@@ -29,7 +29,7 @@
         <section>
           <div class="section-head">
             <div>
-              <h2>Bảng tỷ giá so với VND</h2>
+              <h2>Bảng tỷ giá phổ biến so với VND</h2>
               <div class="tiny">Mua/bán là ước tính theo biên độ tham khảo quanh tỷ giá trung tâm.</div>
             </div>
             <div class="button-row"><button id="refreshBtn" class="primary" type="button" title="Tải lại tỷ giá">↻ Cập nhật</button></div>
@@ -60,6 +60,7 @@
       <aside class="stack">
         <div class="panel">
           <h2>Chuyển đổi ngoại tệ</h2>
+          <div class="tiny" style="margin:-8px 0 12px">Danh sách sẽ tự mở rộng theo toàn bộ mã tiền tệ lấy được từ API.</div>
           <div class="form-grid">
             <div class="field full"><label for="fxAmount">Số tiền</label><input id="fxAmount" type="number" min="0" step="any" value="1000"></div>
             <div class="field"><label for="fromCurrency">Từ</label><select id="fromCurrency"></select></div>
@@ -92,26 +93,29 @@
   </main>
 
   <script>
-    const currencyMeta={USD:'Đô la Mỹ',EUR:'Euro',JPY:'Yên Nhật',CNY:'Nhân dân tệ',THB:'Baht Thái',GBP:'Bảng Anh',AUD:'Đô la Úc',SGD:'Đô Singapore',KRW:'Won Hàn Quốc',VND:'Đồng Việt Nam'};
+    const currencyMeta={USD:'Đô la Mỹ',EUR:'Euro',JPY:'Yên Nhật',CNY:'Nhân dân tệ',THB:'Baht Thái',GBP:'Bảng Anh',AUD:'Đô la Úc',SGD:'Đô Singapore',KRW:'Won Hàn Quốc',VND:'Đồng Việt Nam',CAD:'Đô la Canada',CHF:'Franc Thụy Sĩ',HKD:'Đô la Hong Kong',NZD:'Đô la New Zealand',SEK:'Krona Thụy Điển',NOK:'Krone Na Uy',DKK:'Krone Đan Mạch',INR:'Rupee Ấn Độ',TWD:'Đô la Đài Loan',MYR:'Ringgit Malaysia',IDR:'Rupiah Indonesia',PHP:'Peso Philippines',LAK:'Kip Lào',KHR:'Riel Campuchia',MMK:'Kyat Myanmar',BRL:'Real Brazil',MXN:'Peso Mexico',ZAR:'Rand Nam Phi',TRY:'Lira Thổ Nhĩ Kỳ',AED:'Dirham UAE',SAR:'Riyal Saudi',RUB:'Ruble Nga'};
+    const preferredOrder=['VND','USD','EUR','JPY','CNY','THB','GBP','AUD','CAD','CHF','SGD','HKD','NZD','KRW','TWD','MYR','IDR','PHP','LAK','KHR','INR','AED','SAR'];
     const displayCurrencies=['USD','EUR','JPY','CNY','THB','GBP','AUD','SGD','KRW'];
-    const allCurrencies=['VND',...displayCurrencies];
-    const fallbackRates={USD:1,VND:26100,EUR:.86,JPY:146.5,CNY:7.18,THB:36.7,GBP:.74,AUD:1.52,SGD:1.29,KRW:1360};
+    const fallbackRates={USD:1,VND:26100,EUR:.86,JPY:146.5,CNY:7.18,THB:36.7,GBP:.74,AUD:1.52,SGD:1.29,KRW:1360,CAD:1.37,CHF:.8,HKD:7.85,NZD:1.65,MYR:4.23,IDR:16200,PHP:56.7,INR:85.4};
     const OUNCE_GRAMS=31.1034768,LUONG_GRAMS=37.5;
-    let rates={...fallbackRates},liveMode=false;
+    let rates={...fallbackRates},availableCurrencies=[];
+    let liveMode=false;
     const els={updatedAt:document.getElementById('updatedAt'),dataNote:document.getElementById('dataNote'),rateRows:document.getElementById('rateRows'),refreshBtn:document.getElementById('refreshBtn'),fxAmount:document.getElementById('fxAmount'),fromCurrency:document.getElementById('fromCurrency'),toCurrency:document.getElementById('toCurrency'),fxResult:document.getElementById('fxResult'),goldUsdInput:document.getElementById('goldUsdInput'),usdVndInput:document.getElementById('usdVndInput'),goldConvertResult:document.getElementById('goldConvertResult'),goldUsdMetric:document.getElementById('goldUsdMetric'),goldVndMetric:document.getElementById('goldVndMetric'),localBuyInput:document.getElementById('localBuyInput'),localSellInput:document.getElementById('localSellInput'),localGoldMetric:document.getElementById('localGoldMetric')};
     function formatVnd(value){return new Intl.NumberFormat('vi-VN',{maximumFractionDigits:0}).format(value)+' VND'}
     function formatNumber(value,digits=2){return new Intl.NumberFormat('vi-VN',{maximumFractionDigits:digits}).format(value)}
+    function getAvailableCurrencies(){const codes=Object.keys(rates).filter(code=>Number(rates[code])>0);return codes.sort((a,b)=>{const ia=preferredOrder.indexOf(a),ib=preferredOrder.indexOf(b);if(ia!==-1||ib!==-1)return (ia===-1?999:ia)-(ib===-1?999:ib);return a.localeCompare(b)})}
+    function getCurrencyName(code){return currencyMeta[code]||code}
     function rateToVnd(code){return code==='VND'?1:rates.VND/rates[code]}
     function convertCurrency(amount,from,to){if(!rates[from]||!rates[to])return 0;return amount/rates[from]*rates[to]}
-    function renderSelects(){const options=allCurrencies.map(code=>`<option value="${code}">${code} - ${currencyMeta[code]}</option>`).join('');els.fromCurrency.innerHTML=options;els.toCurrency.innerHTML=options;els.fromCurrency.value='USD';els.toCurrency.value='VND'}
-    function renderRates(){els.rateRows.innerHTML=displayCurrencies.map(code=>{const mid=rateToVnd(code),spread=code==='JPY'||code==='KRW'?.012:.006;return `<tr><td><span class="code">${code}</span><span class="name">${currencyMeta[code]}</span></td><td><strong>${formatVnd(mid)}</strong></td><td class="hide-mobile">${formatVnd(mid*(1-spread))}</td><td class="hide-mobile">${formatVnd(mid*(1+spread))}</td></tr>`}).join('')}
+    function renderSelects(){const previousFrom=els.fromCurrency.value||'USD',previousTo=els.toCurrency.value||'VND';availableCurrencies=getAvailableCurrencies();const options=availableCurrencies.map(code=>`<option value="${code}">${code} - ${getCurrencyName(code)}</option>`).join('');els.fromCurrency.innerHTML=options;els.toCurrency.innerHTML=options;els.fromCurrency.value=availableCurrencies.includes(previousFrom)?previousFrom:'USD';els.toCurrency.value=availableCurrencies.includes(previousTo)?previousTo:'VND'}
+    function renderRates(){els.rateRows.innerHTML=displayCurrencies.filter(code=>rates[code]).map(code=>{const mid=rateToVnd(code),spread=code==='JPY'||code==='KRW'?.012:.006;return `<tr><td><span class="code">${code}</span><span class="name">${getCurrencyName(code)}</span></td><td><strong>${formatVnd(mid)}</strong></td><td class="hide-mobile">${formatVnd(mid*(1-spread))}</td><td class="hide-mobile">${formatVnd(mid*(1+spread))}</td></tr>`}).join('')}
     function renderFxResult(){const amount=Number(els.fxAmount.value)||0,from=els.fromCurrency.value,to=els.toCurrency.value,result=convertCurrency(amount,from,to),digits=to==='VND'?0:4;els.fxResult.textContent=`${formatNumber(result,digits)} ${to}`}
     function renderGold(){const goldUsd=Number(els.goldUsdInput.value)||0,usdVnd=Number(els.usdVndInput.value)||rateToVnd('USD'),vndPerLuong=goldUsd*usdVnd*(LUONG_GRAMS/OUNCE_GRAMS),buy=(Number(els.localBuyInput.value)||0)*1000000,sell=(Number(els.localSellInput.value)||0)*1000000;els.goldUsdMetric.textContent=`${formatNumber(goldUsd,2)} USD/oz`;els.goldVndMetric.textContent=formatVnd(vndPerLuong);els.goldConvertResult.textContent=formatVnd(vndPerLuong);els.localGoldMetric.textContent=`${formatNumber(buy/1000000,2)} - ${formatNumber(sell/1000000,2)} triệu`}
-    function renderAll(){renderRates();renderFxResult();renderGold()}
-    async function loadRates(){els.updatedAt.textContent='Đang tải tỷ giá...';try{const response=await fetch('https://open.er-api.com/v6/latest/USD',{cache:'no-store'});if(!response.ok)throw new Error('rate api failed');const data=await response.json(),next={USD:1};allCurrencies.forEach(code=>{if(code!=='USD'&&data.rates&&data.rates[code])next[code]=data.rates[code]});rates={...fallbackRates,...next};liveMode=true;els.usdVndInput.value=Math.round(rates.VND);const stamp=data.time_last_update_utc?new Date(data.time_last_update_utc):new Date();els.updatedAt.textContent=stamp.toLocaleString('vi-VN');els.dataNote.textContent='Tỷ giá live từ open.er-api.com.'}catch(error){liveMode=false;els.updatedAt.textContent='Dữ liệu dự phòng';els.dataNote.textContent='Không tải được API tỷ giá, đang dùng bộ số mẫu có thể chỉnh.'}renderAll()}
+    function renderAll(){renderSelects();renderRates();renderFxResult();renderGold()}
+    async function loadRates(){els.updatedAt.textContent='Đang tải tỷ giá...';try{const response=await fetch('https://open.er-api.com/v6/latest/USD',{cache:'no-store'});if(!response.ok)throw new Error('rate api failed');const data=await response.json();const next={};Object.entries(data.rates||{}).forEach(([code,value])=>{if(/^[A-Z]{3}$/.test(code)&&Number(value)>0)next[code]=Number(value)});next.USD=1;rates={...next};if(!rates.VND)rates.VND=fallbackRates.VND;liveMode=true;els.usdVndInput.value=Math.round(rates.VND);const stamp=data.time_last_update_utc?new Date(data.time_last_update_utc):new Date();els.updatedAt.textContent=stamp.toLocaleString('vi-VN');els.dataNote.textContent=`Tỷ giá live từ open.er-api.com. Bộ chuyển đổi đang có ${Object.keys(rates).length} ngoại tệ.`}catch(error){rates={...fallbackRates};liveMode=false;els.updatedAt.textContent='Dữ liệu dự phòng';els.dataNote.textContent='Không tải được API tỷ giá, đang dùng bộ số mẫu có thể chỉnh.'}renderAll()}
     async function loadGoldSpot(){try{const response=await fetch('https://api.gold-api.com/price/XAU',{cache:'no-store'});if(!response.ok)throw new Error('gold api failed');const data=await response.json();if(data&&Number(data.price)>0){els.goldUsdInput.value=Number(data.price).toFixed(2);if(liveMode)els.dataNote.textContent+=' Giá vàng thế giới live từ gold-api.com.';renderGold()}}catch(error){renderGold()}}
     function bindEvents(){[els.fxAmount,els.fromCurrency,els.toCurrency].forEach(el=>el.addEventListener('input',renderFxResult));[els.goldUsdInput,els.usdVndInput,els.localBuyInput,els.localSellInput].forEach(el=>el.addEventListener('input',renderGold));els.refreshBtn.addEventListener('click',async()=>{await loadRates();await loadGoldSpot()})}
-    renderSelects();bindEvents();renderAll();loadRates().then(loadGoldSpot);
+    bindEvents();renderAll();loadRates().then(loadGoldSpot);
   </script>
 </body>
 </html>
