@@ -11,10 +11,7 @@
 <body>
   <main class="shell">
     <header>
-      <div>
-        <h1>Tỷ giá & vàng</h1>
-        <p class="subtitle">Theo dõi nhanh các tỷ giá phổ biến so với VND; chuyển đổi giữa toàn bộ ngoại tệ API trả về; quy đổi giá vàng thế giới USD/ounce sang VND/lượng.</p>
-      </div>
+      <div><h1>Tỷ giá & vàng</h1><p class="subtitle">Theo dõi nhanh các tỷ giá phổ biến so với VND; chuyển đổi giữa toàn bộ ngoại tệ API trả về; quy đổi giá vàng thế giới USD/ounce sang VND/lượng.</p></div>
       <div class="status" aria-live="polite"><span>Cập nhật</span><strong id="updatedAt">Đang tải dữ liệu...</strong><small id="dataNote" class="tiny">Có dữ liệu dự phòng khi API không phản hồi.</small></div>
     </header>
 
@@ -22,35 +19,18 @@
       <div class="stack">
         <section>
           <div class="section-head"><div><h2>Bảng tỷ giá phổ biến so với VND</h2><div class="tiny">Mua/bán là ước tính theo biên độ tham khảo quanh tỷ giá trung tâm.</div></div><button id="refreshBtn" class="primary" type="button">↻ Cập nhật</button></div>
-          <div style="overflow-x:auto"><table><thead><tr><th>Ngoại tệ</th><th>1 đơn vị ≈ VND</th><th class="hide-mobile">Mua</th><th class="hide-mobile">Bán</th></tr></thead><tbody id="rateRows"></tbody></table></div>
+          <div style="overflow-x:auto"><table><thead><tr><th>Ngoại tệ</th><th>1 đơn vị (VND)</th><th class="hide-mobile">Mua (VND)</th><th class="hide-mobile">Bán (VND)</th></tr></thead><tbody id="rateRows"></tbody></table></div>
         </section>
         <section>
           <div class="section-head"><div><h2>Vàng</h2><div class="tiny">1 ounce troy = 31,1034768 g; 1 lượng = 37,5 g. Giá vàng Việt Nam nhập thủ công dùng để tính chênh lệch tham khảo.</div></div></div>
-          <div class="metrics">
-            <div class="metric gold"><span>Vàng thế giới</span><small class="unit">USD/ounce</small><strong id="goldUsdMetric">4.100</strong></div>
-            <div class="metric blue"><span>Quy đổi sang VN</span><small class="unit">VND/lượng</small><strong id="goldVndMetric">...</strong></div>
-            <div class="metric red premium"><span>Chênh lệch với TG</span><small class="unit">triệu đồng/lượng</small><strong id="premiumMetric">...</strong></div>
-          </div>
+          <div class="metrics"><div class="metric gold"><span>Vàng thế giới</span><small class="unit">USD/ounce</small><strong id="goldUsdMetric">4.100</strong></div><div class="metric blue"><span>Quy đổi sang VN</span><small class="unit">VND/lượng</small><strong id="goldVndMetric">...</strong></div><div class="metric red premium"><span>Chênh lệch với TG</span><small class="unit">triệu đồng/lượng</small><strong id="premiumMetric">...</strong></div></div>
         </section>
       </div>
 
       <aside class="stack">
-        <div class="panel">
-          <h2>Chuyển đổi ngoại tệ</h2>
-          <div class="tiny" style="margin:-8px 0 12px">Danh sách tự mở rộng theo toàn bộ mã tiền tệ lấy được từ API.</div>
-          <div class="form-grid"><div class="field full"><label for="fxAmount">Số tiền</label><input id="fxAmount" type="number" min="0" step="any" value="1000"></div><div class="field"><label for="fromCurrency">Từ</label><select id="fromCurrency"></select></div><div class="field"><label for="toCurrency">Sang</label><select id="toCurrency"></select></div></div>
-          <div class="result"><span class="tiny">Kết quả</span><strong id="fxResult">...</strong></div>
-        </div>
-        <div class="panel">
-          <h2>Quy đổi vàng thế giới</h2>
-          <div class="form-grid"><div class="field full"><label for="goldUsdInput">Giá vàng thế giới, USD/ounce</label><input id="goldUsdInput" type="number" min="0" step="any" value="4100"></div><div class="field full"><label for="usdVndInput">USD/VND dùng để tính</label><input id="usdVndInput" type="number" min="0" step="any" value="26100"></div></div>
-          <div class="result"><span class="tiny">VND/lượng</span><strong id="goldConvertResult">...</strong></div>
-        </div>
-        <div class="panel">
-          <h2>Giá vàng VN tham khảo</h2>
-          <div class="tiny" style="margin:-8px 0 12px">Nhập tay để so sánh chênh lệch với giá thế giới quy đổi, không phải dữ liệu tự động từ thương hiệu hay cửa hàng cụ thể.</div>
-          <div class="form-grid"><div class="field"><label for="localBuyInput">Mua vào, triệu/lượng</label><input id="localBuyInput" type="number" min="0" step="any" value="118"></div><div class="field"><label for="localSellInput">Bán ra, triệu/lượng</label><input id="localSellInput" type="number" min="0" step="any" value="120"></div></div>
-        </div>
+        <div class="panel"><h2>Chuyển đổi ngoại tệ</h2><div class="tiny" style="margin:-8px 0 12px">Danh sách tự mở rộng theo toàn bộ mã tiền tệ lấy được từ API.</div><div class="form-grid"><div class="field full"><label for="fxAmount">Số tiền</label><input id="fxAmount" type="number" min="0" step="any" value="1000"></div><div class="field"><label for="fromCurrency">Từ</label><select id="fromCurrency"></select></div><div class="field"><label for="toCurrency">Sang</label><select id="toCurrency"></select></div></div><div class="result"><span class="tiny">Kết quả</span><strong id="fxResult">...</strong></div></div>
+        <div class="panel"><h2>Quy đổi vàng thế giới</h2><div class="form-grid"><div class="field full"><label for="goldUsdInput">Giá vàng thế giới, USD/ounce</label><input id="goldUsdInput" type="number" min="0" step="any" value="4100"></div><div class="field full"><label for="usdVndInput">USD/VND dùng để tính</label><input id="usdVndInput" type="number" min="0" step="any" value="26100"></div></div><div class="result"><span class="tiny">VND/lượng</span><strong id="goldConvertResult">...</strong></div></div>
+        <div class="panel"><h2>Giá vàng VN tham khảo</h2><div class="tiny" style="margin:-8px 0 12px">Nhập tay để so sánh chênh lệch với giá thế giới quy đổi, không phải dữ liệu tự động từ thương hiệu hay cửa hàng cụ thể.</div><div class="form-grid"><div class="field"><label for="localBuyInput">Mua vào, triệu/lượng</label><input id="localBuyInput" type="number" min="0" step="any" value="118"></div><div class="field"><label for="localSellInput">Bán ra, triệu/lượng</label><input id="localSellInput" type="number" min="0" step="any" value="120"></div></div></div>
       </aside>
     </div>
     <footer>Công cụ chỉ để tham khảo nhanh. Tỷ giá và giá vàng giao dịch thực tế có thể khác theo ngân hàng, tiệm vàng, thương hiệu, thời điểm và biên độ mua/bán.</footer>
@@ -75,7 +55,7 @@
     function rateToVnd(code){return code==='VND'?1:rates.VND/rates[code]}
     function convertCurrency(amount,from,to){if(!rates[from]||!rates[to])return 0;return amount/rates[from]*rates[to]}
     function renderSelects(){const previousFrom=els.fromCurrency.value||'USD',previousTo=els.toCurrency.value||'VND',codes=getAvailableCurrencies();const options=codes.map(code=>`<option value="${code}">${code} - ${getCurrencyName(code)}</option>`).join('');els.fromCurrency.innerHTML=options;els.toCurrency.innerHTML=options;els.fromCurrency.value=codes.includes(previousFrom)?previousFrom:'USD';els.toCurrency.value=codes.includes(previousTo)?previousTo:'VND'}
-    function renderRates(){els.rateRows.innerHTML=displayCurrencies.filter(code=>rates[code]).map(code=>{const mid=rateToVnd(code);const spread=(code==='JPY'||code==='KRW')?0.012:0.006;return `<tr><td><span class="code">${code}</span><span class="name">${getCurrencyName(code)}</span></td><td><strong>${formatVnd(mid)}</strong></td><td class="hide-mobile">${formatVnd(mid*(1-spread))}</td><td class="hide-mobile">${formatVnd(mid*(1+spread))}</td></tr>`}).join('')}
+    function renderRates(){els.rateRows.innerHTML=displayCurrencies.filter(code=>rates[code]).map(code=>{const mid=rateToVnd(code);const spread=(code==='JPY'||code==='KRW')?0.012:0.006;return `<tr><td><span class="code">${code}</span><span class="name">${getCurrencyName(code)}</span></td><td><strong>${formatVndPlain(mid)}</strong></td><td class="hide-mobile">${formatVndPlain(mid*(1-spread))}</td><td class="hide-mobile">${formatVndPlain(mid*(1+spread))}</td></tr>`}).join('')}
     function renderFxResult(){const amount=Number(els.fxAmount.value)||0,from=els.fromCurrency.value,to=els.toCurrency.value,result=convertCurrency(amount,from,to),digits=to==='VND'?0:4;els.fxResult.textContent=`${formatNumber(result,digits)} ${to}`}
     function renderGold(){const goldUsd=Number(els.goldUsdInput.value)||0,usdVnd=Number(els.usdVndInput.value)||rateToVnd('USD'),vndPerLuong=goldUsd*usdVnd*(LUONG_GRAMS/OUNCE_GRAMS),buy=(Number(els.localBuyInput.value)||0)*1000000,sell=(Number(els.localSellInput.value)||0)*1000000;els.goldUsdMetric.textContent=formatPlain(goldUsd,1);els.goldVndMetric.textContent=formatVndPlain(vndPerLuong);els.goldConvertResult.textContent=formatVnd(vndPerLuong);els.premiumMetric.textContent=`${formatSignedMillion(buy-vndPerLuong)} / ${formatSignedMillion(sell-vndPerLuong)}`}
     function renderAll(){renderSelects();renderRates();renderFxResult();renderGold()}
