@@ -65,7 +65,7 @@ h1{margin:0;font-size:clamp(36px,5vw,52px);line-height:1;white-space:nowrap;lett
     const OUNCE_GRAMS=31.1034768,LUONG_GRAMS=37.5;
     let rates={...fallbackRates},liveMode=false,assets={...fallbackAssets};
     const els={updatedAt:document.getElementById('updatedAt'),dataNote:document.getElementById('dataNote'),rateRows:document.getElementById('rateRows'),refreshBtn:document.getElementById('refreshBtn'),fxAmount:document.getElementById('fxAmount'),fromCurrency:document.getElementById('fromCurrency'),toCurrency:document.getElementById('toCurrency'),fxResult:document.getElementById('fxResult'),goldUsdMetric:document.getElementById('goldUsdMetric'),goldVndMetric:document.getElementById('goldVndMetric'),localBuyInput:document.getElementById('localBuyInput'),localSellInput:document.getElementById('localSellInput'),premiumMetric:document.getElementById('premiumMetric'),assetGrid:document.getElementById('assetGrid'),vietQrButton:document.getElementById('vietQrButton'),vietQrModal:document.getElementById('vietQrModal'),vietQrImage:document.getElementById('vietQrImage'),qrFallback:document.getElementById('qrFallback')};
-    els.localBuyInput.value='133,4';els.localSellInput.value='138,4';
+    els.localBuyInput.value='145';els.localSellInput.value='148';
     function parseLocalNumber(value){return Number(String(value).trim().replace(/\./g,'').replace(',','.'))||0}
     function formatVndPlain(value){return new Intl.NumberFormat('vi-VN',{maximumFractionDigits:0}).format(value)}
     function formatUsd(value,digits=2){return '$'+new Intl.NumberFormat('vi-VN',{minimumFractionDigits:digits,maximumFractionDigits:digits}).format(value)}
